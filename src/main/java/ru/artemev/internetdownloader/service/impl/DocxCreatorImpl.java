@@ -1,6 +1,7 @@
 package ru.artemev.internetdownloader.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
@@ -16,20 +17,31 @@ import java.util.List;
 @Service
 public class DocxCreatorImpl implements DocxCreator {
 
-    @Value("${lord-of-the-mysteries.path-to-dir}")
+    @Value("${ranobes.com.path-to-save-dir}")
     private String pathToDir;
 
     @Override
-    public void saveChapter(Integer chapterNum, String title, List<String> paragraphs) {
+    public void saveChapter(String title, List<String> paragraphs) {
         log.info("Started to save data in document");
         try {
             WordprocessingMLPackage wordPackage = WordprocessingMLPackage.createPackage();
             MainDocumentPart mainDocumentPart = wordPackage.getMainDocumentPart();
             mainDocumentPart.addStyledParagraphOfText("Title", title);
-            mainDocumentPart.addParagraphOfText("");
+            mainDocumentPart.addParagraphOfText(StringUtils.EMPTY);
             paragraphs
-                    .forEach(mainDocumentPart::addParagraphOfText);
-            wordPackage.save(new File(pathToDir + chapterNum + " - " + title + ".docx"));
+                    .forEach(paragraph -> {
+                        mainDocumentPart.addParagraphOfText(paragraph);
+                        mainDocumentPart.addParagraphOfText(StringUtils.EMPTY);
+                    });
+            String fileName;
+            if (title.contains(":")) {
+                fileName = "Повелитель тайн: " + title.substring(0, title.lastIndexOf(':')).strip();
+            } else if (title.contains(".")) {
+                fileName = "Повелитель тайн: " + title.substring(0, title.lastIndexOf('.')).strip();
+            } else {
+                fileName = "Повелитель тайн: " + title.substring(0, title.lastIndexOf(' ')).strip();
+            }
+            wordPackage.save(new File(pathToDir + fileName + ".docx"));
         } catch (Docx4JException e) {
             throw new RuntimeException(e);
         }

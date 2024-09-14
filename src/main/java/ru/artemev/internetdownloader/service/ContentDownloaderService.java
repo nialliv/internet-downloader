@@ -1,12 +1,12 @@
 package ru.artemev.internetdownloader.service;
 
-import ru.artemev.internetdownloader.dto.ranobelib.ChapterListResponse;
-import ru.artemev.internetdownloader.dto.ranobelib.ChapterResponse;
+import java.util.List;
+import java.util.Map;
 
 public interface ContentDownloaderService {
 
-    ChapterListResponse getChapters();
+    Map<String, String> getMapChapters();
 
-    ChapterResponse getChapterByBranchIdAndNumberAndVolume(Integer branchId, Integer number, Integer volume);
+    List<String> downloadParagraphs(String url);
 
 }

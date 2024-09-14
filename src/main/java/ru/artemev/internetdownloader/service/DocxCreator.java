@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface DocxCreator {
 
-    void saveChapter(Integer chapterNum, String title, List<String> paragraphs);
+    void saveChapter(String title, List<String> paragraphs);
 
 }
